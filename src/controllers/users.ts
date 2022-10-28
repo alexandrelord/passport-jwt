@@ -18,7 +18,7 @@ export const login = async (req: Request, res: Response) => {
         if (isValid) {
             const { refreshToken, accessToken } = issueJWT(user);
 
-            res.cookie('jwt', refreshToken, { httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 * 24 });
+            res.cookie('jwt', refreshToken, { httpOnly: true, secure: true });
 
             return res.json({ accessToken });
         } else {
@@ -46,7 +46,7 @@ export const register = async (req: Request, res: Response) => {
         const user = await newUser.save();
         const { refreshToken, accessToken } = issueJWT(user);
 
-        res.cookie('jwt', refreshToken, { httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 * 24 });
+        res.cookie('jwt', refreshToken, { httpOnly: true, secure: true });
 
         return res.json({ accessToken });
     } catch (error) {

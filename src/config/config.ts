@@ -7,7 +7,10 @@ export const config = {
         url: `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.slhir.mongodb.net/passport-jwt`,
     },
     jwt: {
-        accessTokenSecret: process.env.ACCESS_TOKEN_SECRET!,
-        refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET!,
+        accessTokenSecret: process.env.ACCESS_TOKEN_SECRET || 'access-token-secret',
+        refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || 'refresh-token-secret',
+    },
+    crypto: {
+        salt: process.env.SALT || 'salt',
     },
 };

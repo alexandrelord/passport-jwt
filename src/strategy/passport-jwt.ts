@@ -1,7 +1,8 @@
+import mongoose from 'mongoose';
+import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { config } from '../config/config';
-import passport from 'passport';
-import User from '../models/User';
+import User, { IUser } from '../models/User';
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -9,7 +10,7 @@ const opts = {
 };
 
 const jwtStrategy = new JwtStrategy(opts, (jwtPayload, done) => {
-    User.findOne({ _id: jwtPayload.sub }, async (err: any, user: any) => {
+    User.findOne({ _id: jwtPayload.sub }, async (err: mongoose.CallbackError, user: IUser) => {
         if (err) {
             return done(err, false);
         }

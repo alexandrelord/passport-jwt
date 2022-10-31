@@ -5,8 +5,7 @@ describe('Utils', () => {
     describe('validPassword', () => {
         it('should return true if the password matches the hash', () => {
             const password = 'password';
-            const salt = crypto.randomBytes(16).toString('hex');
-            const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+            const { salt, hash } = genPassword(password);
 
             const result = validPassword(password, salt, hash);
 

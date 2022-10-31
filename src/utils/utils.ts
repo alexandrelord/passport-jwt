@@ -5,6 +5,7 @@ import { config } from '../config/config';
 /**
  *
  * @param {*} password - The plain text password
+ * @param {*} salt - The salt stored in the database
  * @param {*} hash - The hash stored in the database
  * @returns {boolean} - Returns true if the password matches the hash
  *
@@ -12,8 +13,8 @@ import { config } from '../config/config';
  * the decrypted hashed password stored in the DB with the password that the user provided at login
  *
  */
-export const validPassword = (password: string, hash: string) => {
-    const hashVerify = crypto.pbkdf2Sync(password, config.crypto.salt, 10000, 64, 'sha512').toString('hex');
+export const validPassword = (password: string, salt: string, hash: string) => {
+    const hashVerify = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
 
     return hash === hashVerify;
 };
@@ -23,16 +24,20 @@ export const validPassword = (password: string, hash: string) => {
 /**
  *
  * @param {*} password - The password string that the user inputs to the password field in the register form
- * @returns {string} - Returns the hashed password
+ * @returns {object} - Returns the salt and hash of the password
  *
  * This function takes a plain text password and creates a hash out of it.  This is to prevent storing plain text passwords in the DB.
  *
  */
 
 export const genPassword = (password: string) => {
-    const genHash = crypto.pbkdf2Sync(password, config.crypto.salt, 10000, 64, 'sha512').toString('hex');
+    const salt = crypto.randomBytes(16).toString('hex');
+    const genHash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
 
-    return genHash;
+    return {
+        salt,
+        hash: genHash,
+    };
 };
 
 // salting is a process of adding a random string of characters to the password before hashing it

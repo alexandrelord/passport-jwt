@@ -18,7 +18,7 @@ export const login = async (req: Request, res: Response) => {
             return res.status(401).json({ msg: 'Could not find user' });
         }
 
-        const isValid = validPassword(password, user.password);
+        const isValid = validPassword(password, user.password.salt, user.password.hash);
 
         if (isValid) {
             const { refreshToken, accessToken } = issueJWT(user._id);
@@ -50,7 +50,10 @@ export const register = async (req: Request, res: Response) => {
 
     const newUser = new User({
         email: email,
-        password: saltHash,
+        password: {
+            salt: saltHash.salt,
+            hash: saltHash.hash,
+        },
     });
 
     try {

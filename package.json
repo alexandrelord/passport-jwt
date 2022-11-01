@@ -8,6 +8,7 @@
         "start": "ts-node-dev --respawn --transpile-only src/server.ts",
         "lint": "eslint --ext .ts src/",
         "test": "jest",
+        "test:detect": "jest --detectOpenHandles",
         "test:coverage": "jest --coverage",
         "test:watch": "jest --watch"
     },
@@ -26,6 +27,7 @@
         "@types/jest": "^29.2.0",
         "@types/node": "^18.11.7",
         "@types/passport-jwt": "^3.0.7",
+        "@types/supertest": "^2.0.12",
         "@typescript-eslint/eslint-plugin": "^5.41.0",
         "@typescript-eslint/parser": "^5.41.0",
         "eslint": "^8.26.0",

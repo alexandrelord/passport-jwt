@@ -1,7 +1,6 @@
-import crypto from 'crypto';
-import { validPassword, genPassword, issueJWT } from '../../src/utils/utils';
+import { validPassword, genPassword, issueJWT } from '../../src/services/services';
 
-describe('Utils', () => {
+describe('service functions', () => {
     describe('validPassword', () => {
         it('should return true if the password matches the hash', () => {
             const password = 'password';

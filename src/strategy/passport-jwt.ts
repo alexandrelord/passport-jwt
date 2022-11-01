@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { config } from '../config/config';
-import User, { IUser } from '../models/User';
+import User, { IUser } from '../models/user';
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

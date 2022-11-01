@@ -76,24 +76,23 @@ export const issueJWT = (_id: string) => {
 
 export const loginUser = async (email: string, password: string) => {
     if (!email || !password) {
-        throw new Error('All fields are required');
+        throw new StatusError('Email and password are required', 400);
     }
 
     const user = await findUser(email);
 
     if (!user) {
-        throw new Error('User does not exist');
+        throw new StatusError('User does not exist', 404);
     }
 
     const isValid = validPassword(password, user.password.salt, user.password.hash);
 
-    if (isValid) {
-        const { refreshToken, accessToken } = issueJWT(user._id);
-
-        return { refreshToken, accessToken };
-    } else {
-        throw new Error('You entered the wrong password');
+    if (!isValid) {
+        throw new StatusError('Invalid password', 401);
     }
+    const { refreshToken, accessToken } = issueJWT(user._id);
+
+    return { refreshToken, accessToken };
 };
 
 // --------------------------------------------------------------------------------
@@ -108,12 +107,12 @@ export const loginUser = async (email: string, password: string) => {
 
 export const createUser = async (email: string, password: string) => {
     if (!email || !password) {
-        throw new Error('All fields are required');
+        throw new StatusError('All fields are required', 400);
     }
 
     const user = await findUser(email);
     if (user) {
-        throw new Error('User already exists');
+        throw new StatusError('User already exists', 400);
     }
 
     const { salt, hash } = genPassword(password);
@@ -160,12 +159,26 @@ export const decodeJWT = async (token: string) => {
 
     const user = await User.findById(decoded.sub);
     if (!user) {
-        throw new Error('User does not exist');
+        throw new StatusError('User does not exist', 400);
     }
 
     const { accessToken } = issueJWT(user._id);
 
     return accessToken;
 };
+
+// --------------------------------------------------------------------------------
+
+/**
+ *
+ * StatusError class
+ *
+ */
+
+export class StatusError extends Error {
+    constructor(public message: string, public status: number) {
+        super(message);
+    }
+}
 
 // --------------------------------------------------------------------------------

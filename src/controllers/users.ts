@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { decodeJWT, createUser, loginUser } from '../services/services';
+import { decodeJWT, createUser, loginUser, StatusError } from '../services/services';
 
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
@@ -11,6 +11,9 @@ export const login = async (req: Request, res: Response) => {
 
         return res.status(200).json({ accessToken });
     } catch (error) {
+        if (error instanceof StatusError) {
+            return res.status(error.status).json({ message: error.message });
+        }
         return res.status(500).json({ error });
     }
 };
@@ -25,6 +28,9 @@ export const register = async (req: Request, res: Response) => {
 
         return res.status(200).json({ accessToken });
     } catch (error) {
+        if (error instanceof StatusError) {
+            return res.status(error.status).json({ message: error.message });
+        }
         return res.status(500).json({ error });
     }
 };
@@ -38,6 +44,9 @@ export const refresh = async (req: Request, res: Response) => {
 
             return res.status(200).json({ accessToken });
         } catch (error) {
+            if (error instanceof StatusError) {
+                return res.status(error.status).json({ message: error.message });
+            }
             return res.status(500).json({ error });
         }
     }

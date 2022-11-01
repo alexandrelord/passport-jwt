@@ -36,18 +36,16 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const refresh = async (req: Request, res: Response) => {
-    if (req.cookies.jwt) {
-        const { refreshToken } = req.cookies;
+    const { refreshToken } = req.cookies;
 
-        try {
-            const accessToken = await decodeJWT(refreshToken);
+    try {
+        const accessToken = await decodeJWT(refreshToken);
 
-            return res.status(200).json({ accessToken });
-        } catch (error) {
-            if (error instanceof StatusError) {
-                return res.status(error.status).json({ message: error.message });
-            }
-            return res.status(500).json({ error });
+        return res.status(200).json({ accessToken });
+    } catch (error) {
+        if (error instanceof StatusError) {
+            return res.status(error.status).json({ message: error.message });
         }
+        return res.status(500).json({ error });
     }
 };

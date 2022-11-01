@@ -155,11 +155,15 @@ export const findUser = async (email: string) => {
  **/
 
 export const decodeJWT = async (token: string) => {
+    if (!token) {
+        throw new StatusError('Refresh token is required', 400);
+    }
+
     const decoded = jsonwebtoken.verify(token, config.jwt.refreshTokenSecret);
 
     const user = await User.findById(decoded.sub);
     if (!user) {
-        throw new StatusError('User does not exist', 400);
+        throw new StatusError('User does not exist', 401);
     }
 
     const { accessToken } = issueJWT(user._id);

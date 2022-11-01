@@ -1,7 +1,6 @@
 import User from '../../src/models/user';
 import { setupDB } from '../helpers/helpers';
 
-// use test database for testing
 setupDB();
 
 describe('user model test', () => {

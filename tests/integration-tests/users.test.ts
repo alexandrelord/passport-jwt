@@ -27,7 +27,7 @@ describe('users', () => {
                         { email: '', password: '' },
                     ];
                     for (const body of bodyData) {
-                        await loginUser(body.email, body.password).catch((error) => {
+                        await createUser(body.email, body.password).catch((error) => {
                             expect(error).toBeInstanceOf(StatusError);
                             expect(error.status).toBe(400);
                             expect(error.message).toBe('Email and password are required');

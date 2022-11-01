@@ -1,27 +1,13 @@
-import mongoose from 'mongoose';
 import User from '../../src/models/user';
+import { setupDB } from '../helpers/helpers';
 
 // use test database for testing
-const mongoDB = 'mongodb://localhost:27017/test';
-mongoose.connect(mongoDB);
+setupDB();
 
 describe('user model test', () => {
-    beforeAll(async () => {
-        await User.deleteMany({});
-    });
-
-    afterEach(async () => {
-        await User.deleteMany({});
-    });
-
-    afterAll(async () => {
-        await mongoose.connection.close();
-    });
-
     it('has a module', () => {
         expect(User).toBeDefined();
     });
-
     describe('find user', () => {
         it('should find a user', async () => {
             const user = new User({ email: 'email', password: { salt: 'salt', hash: 'hash' } });

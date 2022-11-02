@@ -10,7 +10,8 @@
         "test": "jest",
         "test:detect": "jest --detectOpenHandles",
         "test:coverage": "jest --coverage",
-        "test:watch": "jest --watch"
+        "db:start": "brew services run mongodb-community",
+        "db:stop": "brew services stop mongodb-community"
     },
     "dependencies": {
         "cookie-parser": "^1.4.6",

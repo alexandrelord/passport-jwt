@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/login', login);
 router.post('/register', register);
-router.post('/refresh', refresh);
+router.get('/refresh', refresh);
 router.get('/protected', passport.authenticate('jwt', { session: false }), (req, res) => {
     res.status(200).json({
         msg: 'You are authorized',

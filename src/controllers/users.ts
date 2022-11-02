@@ -36,10 +36,10 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const refresh = async (req: Request, res: Response) => {
-    const { refreshToken } = req.cookies;
+    const { jwt } = req.cookies;
 
     try {
-        const accessToken = await decodeJWT(refreshToken);
+        const accessToken = await decodeJWT(jwt);
 
         return res.status(200).json({ accessToken });
     } catch (error) {

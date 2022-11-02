@@ -1,19 +1,10 @@
-import express from 'express';
 import request from 'supertest';
-import userRoute from '../../src/routes/users';
-// import User from '../../src/models/user';
+import User from '../../src/models/user';
 import { createUser, loginUser, StatusError } from '../../src/services/services';
 import { setupDB } from '../helpers/helpers';
-
-const app = express();
-
-app.use(express.json());
+import app from '../../src/app';
 
 setupDB();
-
-app.use('/users', userRoute);
-
-// Check refresh route tests, JS unable to access cookies due to httpOnly option
 
 describe('users', () => {
     describe('register', () => {
@@ -149,64 +140,51 @@ describe('users', () => {
             });
         });
     });
-    // describe('refresh', () => {
-    //     describe('success', () => {
-    //         it('should return a 200 status code and a json response for logged in user', async () => {
-    //             // Create a user
-    //             await createUser('email', 'password');
-    //             // Login the user
-    //             const response = await request(app).post('/users/login').send({ email: 'email', password: 'password' });
-    //             // Get the refresh token
-    //             const refreshToken = response.headers['set-cookie'][0].split('=')[1].split(';')[0];
-    //             // Send a request to the refresh route with the refresh token
-    //             const refreshResponse = await request(app).post('/users/refresh').set('Cookie', `jwt=${refreshToken}`);
-    //             expect(refreshResponse.statusCode).toEqual(200);
-    //             expect(refreshResponse.type).toEqual('application/json');
-    //         });
-    //     });
-    // });
-    // it('should return an access token if user is logged in', async () => {
-    //     // Create a user
-    //     const response = await request(app).post('/users/register').send({ email: 'email', password: 'password' });
-    //     // Get the refresh token
-    //     const refreshToken = response.headers['set-cookie'][0].split('=')[1].split(';')[0];
-    //     // Send a request to the refresh route with the refresh token
-    //     const refreshResponse = await request(app).post('/users/refresh').set('Cookie', `jwt=${refreshToken}`);
-    //     expect(refreshResponse.body.accessToken).toBeDefined();
-    // });
-    // });
-    // describe('failure', () => {
-    //     it('should throw an error if the refresh token is not provided', async () => {
-    //         await request(app)
-    //             .post('/users/refresh')
-    //             .catch((error) => {
-    //                 expect(error.status).toBe(400);
-    //                 expect(error.message).toBe('Refresh token is required');
-    //             });
-    //     });
-    //     it('should throw an error if the refresh token is invalid', async () => {
-    //         await request(app)
-    //             .post('/users/refresh')
-    //             .set('Cookie', 'jwt=invalid')
-    //             .catch((error) => {
-    //                 expect(error.status).toBe(401);
-    //             });
-    //     });
-    //     it('should throw an error if the user does not exists in DB', async () => {
-    //         // Create a user
-    //         const response = await request(app).post('/users/register').send({ email: 'email', password: 'password' });
-    //         // Get the refresh token
-    //         const refreshToken = response.headers['set-cookie'][0].split('=')[1].split(';')[0];
-    //         // Delete the user from DB
-    //         await User.deleteOne({ email: 'email' });
-    //         // Send a request to the refresh route with the refresh token
-    //         await request(app)
-    //             .post('/users/refresh')
-    //             .set('Cookie', `jwt=${refreshToken}`)
-    //             .catch((error) => {
-    //                 expect(error.status).toBe(401);
-    //                 expect(error.message).toBe('User does not exist');
-    //             });
-    //     });
-    // });
+    describe('refresh', () => {
+        describe('success', () => {
+            it('should return a 200 status code and a json response for logged in user', async () => {
+                // Create a user
+                const { refreshToken } = await createUser('email', 'password');
+
+                // Send a request to the refresh route with the refresh token
+                const refreshResponse = await request(app).get('/users/refresh').set('Cookie', `jwt=${refreshToken}`);
+                expect(refreshResponse.statusCode).toEqual(200);
+                expect(refreshResponse.type).toEqual('application/json');
+                expect(refreshResponse.body).toHaveProperty('accessToken');
+            });
+        });
+        describe('failure', () => {
+            it('should throw an error if the refresh token is not provided', async () => {
+                await request(app)
+                    .post('/users/refresh')
+                    .catch((error) => {
+                        expect(error.status).toBe(400);
+                        expect(error.message).toBe('Refresh token is required');
+                    });
+            });
+
+            it('should throw an error if the refresh token is invalid', async () => {
+                await request(app)
+                    .post('/users/refresh')
+                    .set('Cookie', 'jwt=invalid')
+                    .catch((error) => {
+                        expect(error.status).toBe(401);
+                    });
+            });
+            it('should throw an error if the user does not exists in DB', async () => {
+                // Create a user
+                const { refreshToken } = await createUser('email', 'password');
+                // Delete the user from DB
+                await User.deleteOne({ email: 'email' });
+                // Send a request to the refresh route with the refresh token
+                await request(app)
+                    .post('/users/refresh')
+                    .set('Cookie', `jwt=${refreshToken}`)
+                    .catch((error) => {
+                        expect(error.status).toBe(401);
+                        expect(error.message).toBe('User does not exist');
+                    });
+            });
+        });
+    });
 });
